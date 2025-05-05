@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Full Value Timer</title>
+<style>
+body { font-family: 'Segoe UI', sans-serif; background-color: #000; color: #00FF00; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; overflow: hidden; }
+#value { font-size: 5em; margin-bottom: 20px; }
+.name { font-size: 2.5em; color: red; visibility: hidden; }
+.nameValue { font-size: 2em; color: red; visibility: hidden; }
+#transferring { font-size: 4em; color: red; visibility: hidden; animation: flash 1s infinite; }
+#routingInfo { font-size: 2em; color: red; visibility: hidden; margin-top: 20px; }
+#complete { font-size: 4em; color: #00FF00; visibility: hidden; }
+@keyframes flash { 0% { opacity: 1; } 50% { opacity: 0; } 100% { opacity: 1; } }
+button { padding: 15px 30px; font-size: 1.2em; background-color: #00FF00; color: #000; border: none; border-radius: 5px; cursor: pointer; }
+button:hover { background-color: #00cc00; }
+</style>
+</head>
+<body>
+<div id="value">$0.00</div>
+<div class="name" id="name0">Tommy Noblin (from routing ••••6614, acct ••••2135)</div>
+<div class="nameValue" id="value0">$0.00</div>
+<div class="name" id="name1">Luke Miller (from routing ••••3578, acct ••••3580)</div>
+<div class="nameValue" id="value1">$0.00</div>
+<div class="name" id="name2">Easton Stallings (from routing ••••7022, acct ••••7663)</div>
+<div class="nameValue" id="value2">$0.00</div>
+<div class="name" id="name3">Paul Harrell (from routing ••••4038, acct ••••8873)</div>
+<div class="nameValue" id="value3">$0.00</div>
+<div class="name" id="name4">Brent Roach (from routing ••••5880, acct ••••4207)</div>
+<div class="nameValue" id="value4">$0.00</div>
+<div class="name" id="name5">Grant Hurt (from routing ••••1043, acct ••••7859)</div>
+<div class="nameValue" id="value5">$0.00</div>
+<div class="name" id="name6">Lance Swiger (from routing ••••7836, acct ••••4070)</div>
+<div class="nameValue" id="value6">$0.00</div>
+
+<div id="transferring">TRANSFERRING</div>
+<div id="routingInfo"></div>
+<div id="complete">TRANSFER COMPLETE</div>
+<button onclick="startTimer()">Start</button>
+<script>
+let value = 0;
+let running = false;
+let ms = 0;
+let nameValues = Array(7).fill(0);
+let nameRates = [0.6, 0.59, 1.49, 1.26, 0.45, 1.09, 0.55];
+let totalIncrement = 0.365;
+const interval = 100;
+const totalDisplay = document.getElementById("value");
+const nameDivs = [document.getElementById("name0"), document.getElementById("name1"), document.getElementById("name2"), document.getElementById("name3"), document.getElementById("name4"), document.getElementById("name5"), document.getElementById("name6")];
+const valueDivs = [document.getElementById("value0"), document.getElementById("value1"), document.getElementById("value2"), document.getElementById("value3"), document.getElementById("value4"), document.getElementById("value5"), document.getElementById("value6")];
+const routingInfo = document.getElementById("routingInfo");
+const transferring = document.getElementById("transferring");
+const complete = document.getElementById("complete");
+let revealed = Array(7).fill(false);
+let transferStarted = false;
+let transferCountdown = 0;
+let completeCountdown = 0;
+
+function startTimer() {
+    if (running) return;
+    running = true;
+
+    function update() {
+        ms += interval;
+        value += totalIncrement;
+        totalDisplay.textContent = "$" + value.toFixed(2);
+
+        const revealTimes = [20000, 30000, 40000, 50000, 60000, 70000, 80000];
+        for (let i = 0; i < nameDivs.length; i++) {
+            if (ms >= revealTimes[i]) {
+                if (!revealed[i]) {
+                    nameDivs[i].style.visibility = "visible";
+                    valueDivs[i].style.visibility = "visible";
+                    revealed[i] = true;
+                }
+                nameValues[i] += nameRates[i] / (1000 / interval);
+                valueDivs[i].textContent = "$" + nameValues[i].toFixed(2);
+            }
+        }
+
+        if (ms >= 90000 && !transferStarted) {
+            transferring.style.visibility = "visible";
+            routingInfo.style.visibility = "visible";
+            routingInfo.textContent = "Transferring to routing ending in " +
+                Math.floor(1000 + Math.random() * 9000) + " and account ending in " +
+                Math.floor(1000 + Math.random() * 9000);
+            transferStarted = true;
+            transferCountdown = 15000 / interval;
+        }
+
+        if (transferCountdown > 0) {
+            transferCountdown--;
+            if (transferCountdown === 0) {
+                transferring.style.visibility = "hidden";
+                routingInfo.style.visibility = "hidden";
+                complete.style.visibility = "visible";
+                completeCountdown = 20000 / interval;
+            }
+        } else if (completeCountdown > 0) {
+            completeCountdown--;
+            if (completeCountdown === 0) {
+                complete.style.visibility = "hidden";
+                nameDivs.forEach(div => div.style.visibility = "hidden");
+                valueDivs.forEach(div => div.style.visibility = "hidden");
+            }
+        }
+
+        setTimeout(update, interval);
+    }
+
+    update();
+}
+</script>
+</body>
+</html>
