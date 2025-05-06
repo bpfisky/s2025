@@ -1,0 +1,100 @@
+
+<div id="value" style="font-size: 5vw; color: #00FF00; text-align: center;">$0.00</div>
+
+<div id="name0" style="font-size: 4vw; color: red; text-align: center; display: none;">
+  Tommy Noblin (to routing ••••6917, acct ••••5957)
+</div>
+<div id="value0" style="font-size: 3.5vw; color: red; text-align: center; display: none;">$0.00</div>
+<div id="name1" style="font-size: 4vw; color: red; text-align: center; display: none;">
+  Luke Miller (to routing ••••5384, acct ••••4583)
+</div>
+<div id="value1" style="font-size: 3.5vw; color: red; text-align: center; display: none;">$0.00</div>
+<div id="name2" style="font-size: 4vw; color: red; text-align: center; display: none;">
+  Easton Stallings (to routing ••••8915, acct ••••3172)
+</div>
+<div id="value2" style="font-size: 3.5vw; color: red; text-align: center; display: none;">$0.00</div>
+<div id="name3" style="font-size: 4vw; color: red; text-align: center; display: none;">
+  Paul Harrell (to routing ••••2710, acct ••••6612)
+</div>
+<div id="value3" style="font-size: 3.5vw; color: red; text-align: center; display: none;">$0.00</div>
+<div id="name4" style="font-size: 4vw; color: red; text-align: center; display: none;">
+  Brent Roach (to routing ••••3495, acct ••••7087)
+</div>
+<div id="value4" style="font-size: 3.5vw; color: red; text-align: center; display: none;">$0.00</div>
+<div id="name5" style="font-size: 4vw; color: red; text-align: center; display: none;">
+  Grant Hurt (to routing ••••2623, acct ••••4015)
+</div>
+<div id="value5" style="font-size: 3.5vw; color: red; text-align: center; display: none;">$0.00</div>
+<div id="name6" style="font-size: 4vw; color: red; text-align: center; display: none;">
+  Lance Swiger (to routing ••••4621, acct ••••4187)
+</div>
+<div id="value6" style="font-size: 3.5vw; color: red; text-align: center; display: none;">$0.00</div>
+<div id="transferring" style="font-size: 6vw; color: red; text-align: center; display: none; animation: flash 1s infinite;">TRANSFERRING</div>
+<div id="routingInfo" style="font-size: 4vw; color: red; text-align: center; display: none;"></div>
+<div id="complete" style="font-size: 6vw; color: #00FF00; text-align: center; display: none;">TRANSFER COMPLETE</div>
+<button onclick="startTimer()" style="padding: 10px 20px; font-size: 4vw; margin-top: 20px;">Start</button>
+
+<style>
+@keyframes flash {
+  0% { opacity: 1; }
+  50% { opacity: 0; }
+  100% { opacity: 1; }
+}
+</style>
+
+<script>
+let value = 0;
+let ms = 0;
+let running = false;
+let nameValues = Array(7).fill(0);
+let nameRates = [1.25, 0.63, 0.98, 0.89, 0.46, 0.68, 1.52];
+const totalIncrement = 219 / 60 / 10;
+const interval = 100;
+
+function startTimer() {
+  if (running) return;
+  running = true;
+  document.querySelector("button").style.display = "none";
+
+  function update() {
+    ms += interval;
+    value += totalIncrement;
+    document.getElementById("value").textContent = "$" + value.toFixed(2);
+
+    for (let i = 0; i < 7; i++) {
+      if (ms >= (20000 + i * 10000)) {
+        document.getElementById("name" + i).style.display = "block";
+        document.getElementById("value" + i).style.display = "block";
+        nameValues[i] += nameRates[i] / 10;
+        document.getElementById("value" + i).textContent = "$" + nameValues[i].toFixed(2);
+      }
+    }
+
+    if (ms === 90000) {
+      document.getElementById("transferring").style.display = "block";
+      document.getElementById("routingInfo").style.display = "block";
+      const r = Math.floor(1000 + Math.random() * 9000);
+      const a = Math.floor(1000 + Math.random() * 9000);
+      document.getElementById("routingInfo").textContent = "Transferring to routing ending in " + r + " and account ending in " + a;
+    }
+
+    if (ms === 105000) {
+      document.getElementById("transferring").style.display = "none";
+      document.getElementById("routingInfo").style.display = "none";
+      document.getElementById("complete").style.display = "block";
+    }
+
+    if (ms === 125000) {
+      document.getElementById("complete").style.display = "none";
+      for (let i = 0; i < 7; i++) {
+        document.getElementById("name" + i).style.display = "none";
+        document.getElementById("value" + i).style.display = "none";
+      }
+    }
+
+    if (running) setTimeout(update, interval);
+  }
+
+  update();
+}
+</script>
