@@ -1,0 +1,102 @@
+
+<div id="value" style="font-size: 5vw; color: #00FF00; text-align: center; margin-bottom: 40px;">$0.00</div>
+
+<div id="nameBlock0" style="margin-bottom: 10px; display: none; text-align: center;">
+  <div id="name0" style="font-size: 6vw; color: red;">Tommy Noblin</div>
+  <div id="routing0" style="font-size: 3vw; color: red;">to routing ••••4424, acct ••••6288</div>
+  <div id="value0" style="font-size: 6vw; color: red;">$0.00</div>
+</div>
+<div id="nameBlock1" style="margin-bottom: 10px; display: none; text-align: center;">
+  <div id="name1" style="font-size: 6vw; color: red;">Luke Miller</div>
+  <div id="routing1" style="font-size: 3vw; color: red;">to routing ••••2760, acct ••••5043</div>
+  <div id="value1" style="font-size: 6vw; color: red;">$0.00</div>
+</div>
+<div id="nameBlock2" style="margin-bottom: 10px; display: none; text-align: center;">
+  <div id="name2" style="font-size: 6vw; color: red;">Easton Stallings</div>
+  <div id="routing2" style="font-size: 3vw; color: red;">to routing ••••6679, acct ••••5781</div>
+  <div id="value2" style="font-size: 6vw; color: red;">$0.00</div>
+</div>
+<div id="nameBlock3" style="margin-bottom: 10px; display: none; text-align: center;">
+  <div id="name3" style="font-size: 6vw; color: red;">Paul Harrell</div>
+  <div id="routing3" style="font-size: 3vw; color: red;">to routing ••••6295, acct ••••7531</div>
+  <div id="value3" style="font-size: 6vw; color: red;">$0.00</div>
+</div>
+<div id="nameBlock4" style="margin-bottom: 10px; display: none; text-align: center;">
+  <div id="name4" style="font-size: 6vw; color: red;">Brent Roach</div>
+  <div id="routing4" style="font-size: 3vw; color: red;">to routing ••••4964, acct ••••4787</div>
+  <div id="value4" style="font-size: 6vw; color: red;">$0.00</div>
+</div>
+<div id="nameBlock5" style="margin-bottom: 10px; display: none; text-align: center;">
+  <div id="name5" style="font-size: 6vw; color: red;">Grant Hurt</div>
+  <div id="routing5" style="font-size: 3vw; color: red;">to routing ••••5669, acct ••••1935</div>
+  <div id="value5" style="font-size: 6vw; color: red;">$0.00</div>
+</div>
+<div id="nameBlock6" style="margin-bottom: 10px; display: none; text-align: center;">
+  <div id="name6" style="font-size: 6vw; color: red;">Lance Swiger</div>
+  <div id="routing6" style="font-size: 3vw; color: red;">to routing ••••3993, acct ••••6833</div>
+  <div id="value6" style="font-size: 6vw; color: red;">$0.00</div>
+</div>
+<div id="transferring" style="font-size: 6vw; color: red; text-align: center; display: none; animation: flash 1s infinite;">TRANSFERRING</div>
+<div id="routingInfo" style="font-size: 4vw; color: red; text-align: center; display: none;"></div>
+<div id="complete" style="font-size: 6vw; color: #00FF00; text-align: center; display: none;">TRANSFER COMPLETE</div>
+<button onclick="startTimer()" style="padding: 10px 20px; font-size: 4vw; margin-top: 20px;">Start</button>
+
+<style>
+@keyframes flash {
+  0% { opacity: 1; }
+  50% { opacity: 0; }
+  100% { opacity: 1; }
+}
+</style>
+
+<script>
+let value = 0;
+let ms = 0;
+let running = false;
+let nameValues = Array(7).fill(0);
+let nameRates = [1.07, 0.67, 0.77, 0.69, 0.88, 1.3, 0.69];
+const totalIncrement = 219 / 60 / 10;
+const interval = 100;
+
+function startTimer() {
+  if (running) return;
+  running = true;
+  document.querySelector("button").style.display = "none";
+
+  function update() {
+    ms += interval;
+    value += totalIncrement;
+    document.getElementById("value").textContent = "$" + value.toFixed(2);
+
+    for (let i = 0; i < 7; i++) {
+      if (ms >= (20000 + i * 10000)) {
+        document.getElementById("nameBlock" + i).style.display = "block";
+        nameValues[i] += nameRates[i] / 10;
+        document.getElementById("value" + i).textContent = "$" + nameValues[i].toFixed(2);
+      }
+    }
+
+    if (ms === 90000) {
+      document.getElementById("transferring").style.display = "block";
+      document.getElementById("routingInfo").style.display = "block";
+      const r = Math.floor(1000 + Math.random() * 9000);
+      const a = Math.floor(1000 + Math.random() * 9000);
+      document.getElementById("routingInfo").textContent = "Transferring to routing ending in " + r + " and account ending in " + a;
+    }
+
+    if (ms === 105000) {
+      document.getElementById("transferring").style.display = "none";
+      document.getElementById("routingInfo").style.display = "none";
+      document.getElementById("complete").style.display = "block";
+
+      for (let i = 0; i < 7; i++) {
+        document.getElementById("nameBlock" + i).style.display = "none";
+      }
+    }
+
+    setTimeout(update, interval);
+  }
+
+  update();
+}
+</script>
